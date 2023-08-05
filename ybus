@@ -1,0 +1,33 @@
+clc; % clear command window
+linedata=[1 2 0.01 0.04 0.08 0.08;
+ 1 3 0 0.1 0 0;
+ 2 3 0.04 0.16 0.09 0.09;
+ 2 5 0.06 0.18 0.08 0.08;
+ 3 4 0 0.1 0 0;
+ 4 5 0.1 0.3 0 0];%entering linedata
+yshunt=[0 0 0 0 0.3];%entering the yshunt values
+n=5;%entering number of buses
+nline=6;%entering number of rows in matrix
+lp=linedata(:,1);%entering the from bus values
+lq=linedata(:,2);%entering the to bus values
+r=linedata(:,3);%entering the resistance values
+x=linedata(:,4);%entering the reactance values
+ycp=i*linedata(:,5);%entering the shunt admittance values at p side
+ycq=i*linedata(:,6);%entering the shunt admittance values at q side
+y=zeros(n);%initialising y bus with zeros
+for k=1:nline
+ z(k)=r(k)+(i*x(k));
+ yline(k)=1/z(k);%calculating admittance values
+end
+for k=1:nline
+ p=lp(k);
+ q=lq(k);
+ y(p,p)=y(p,p)+yline(k)+ycp(k);
+ y(q,q)=y(q,q)+yline(k)+ycq(k);
+ y(p,q)=y(p,q)-yline(k);
+ y(q,p)=y(q,p)-yline(k);%creating y bus
+end
+for j=1:n
+ y(j,j)=y(j,j)+i*yshunt(j);
+end
+y
